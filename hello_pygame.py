@@ -2,17 +2,19 @@ import pygame
 import sys
 
 pygame.init()
-screen = pygame.display.set_mode((400, 600))
+screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("My First Pygame")
 
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
+WHITE = (200, 140, 150)
+GRAY = (150, 150, 150)   # ✅ 추가
+BLACK = (0, 0, 0)        # ✅ 추가
+PINK = (255, 150, 150)   # ✅ 추가
 
 clock = pygame.time.Clock()
-font = pygame.font.SysFont(None, 30) # 글자폰트생성
+font = pygame.font.SysFont(None, 30)
 
-# ✅ 추가: 원의 위치 변수
-x = 200
+# 위치 변수
+x = 400
 y = 300
 
 running = True
@@ -22,7 +24,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # ✅ 추가: 키 입력 처리
+    # 키 입력 처리
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         x -= 5
@@ -34,13 +36,28 @@ while running:
         y += 5
 
     screen.fill(WHITE)
-    
-    # ✅ 수정: 고정값 → 변수 사용
-    pygame.draw.circle(screen, BLUE, (x, y), 50)
-    
-    # fps 계산 및 텍스트 생성
-    fps = clock.get_fps() 
-    fps_text = font.render(f"FPS: {fps:.2f}", True, (0, 0, 0))
+
+    # ✅ 몸통(얼굴)
+    pygame.draw.circle(screen, GRAY, (x, y), 50)
+
+    # ✅ 귀
+    pygame.draw.circle(screen, GRAY, (x - 30, y - 40), 20)
+    pygame.draw.circle(screen, GRAY, (x + 30, y - 40), 20)
+
+    # ✅ 귀 안쪽
+    pygame.draw.circle(screen, PINK, (x - 30, y - 40), 10)
+    pygame.draw.circle(screen, PINK, (x + 30, y - 40), 10)
+
+    # ✅ 눈
+    pygame.draw.circle(screen, BLACK, (x - 15, y - 10), 5)
+    pygame.draw.circle(screen, BLACK, (x + 15, y - 10), 5)
+
+    # ✅ 코
+    pygame.draw.circle(screen, PINK, (x, y + 10), 5)
+
+    # fps 표시
+    fps = clock.get_fps()
+    fps_text = font.render(f"FPS: {fps:.2f}", True, BLACK)
     screen.blit(fps_text, (10, 10))
 
     pygame.display.flip()
