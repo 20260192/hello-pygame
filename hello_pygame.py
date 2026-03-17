@@ -1,6 +1,6 @@
 import pygame
 import sys
-import random  # ✅ 추가
+import random
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -10,7 +10,7 @@ WHITE = (255, 255, 255)
 GRAY = (200, 140, 150)
 BLACK = (0, 0, 0)
 PINK = (255, 150, 150)
-YELLOW = (255, 220, 0)  # ✅ 치즈 색
+YELLOW = (255, 220, 0)
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 30)
@@ -19,14 +19,11 @@ font = pygame.font.SysFont(None, 30)
 x = 400
 y = 300
 
-# ✅ 치즈 관련 변수
-cheese_x = random.randint(50, 750)
-cheese_y = random.randint(50, 550)
-cheese_size = random.randint(5, 10)
+# ✅ 치즈 리스트
+cheeses = []  # 각 치즈는 [x, y, size]
 last_spawn_time = pygame.time.get_ticks()
 
 running = True
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -43,28 +40,30 @@ while running:
     if keys[pygame.K_DOWN]:
         y += 5
 
-    # ✅ 5초마다 치즈 재생성
+    # ✅ 5초마다 새 치즈 추가
     current_time = pygame.time.get_ticks()
     if current_time - last_spawn_time > 5000:
-        cheese_x = random.randint(50, 750)
-        cheese_y = random.randint(50, 550)
-        cheese_size = random.randint(5, 10)
+        new_cheese = [
+            random.randint(50, 750),
+            random.randint(50, 550),
+            random.randint(5, 10)
+        ]
+        cheeses.append(new_cheese)
         last_spawn_time = current_time
 
-    # ✅ 충돌 체크 (간단 거리 계산)
-    distance = ((x - cheese_x) ** 2 + (y - cheese_y) ** 2) ** 0.5
-    if distance < 50 + cheese_size:
-        cheese_x = random.randint(50, 750)
-        cheese_y = random.randint(50, 550)
-        cheese_size = random.randint(5, 10)
-        last_spawn_time = current_time
+    # ✅ 충돌 체크
+    for cheese in cheeses[:]:  # 리스트 복사해서 순회
+        distance = ((x - cheese[0])**2 + (y - cheese[1])**2) ** 0.5
+        if distance < 50 + cheese[2]:
+            cheeses.remove(cheese)  # 닿으면 제거
 
     screen.fill(WHITE)
 
-    # 🧀 치즈
-    pygame.draw.circle(screen, YELLOW, (cheese_x, cheese_y), cheese_size)
+    # 🧀 모든 치즈 그리기
+    for cheese in cheeses:
+        pygame.draw.circle(screen, YELLOW, (cheese[0], cheese[1]), cheese[2])
 
-    # 🐭 얼굴
+    # 🐭 생쥐
     pygame.draw.circle(screen, GRAY, (x, y), 50)
     pygame.draw.circle(screen, GRAY, (x - 30, y - 40), 20)
     pygame.draw.circle(screen, GRAY, (x + 30, y - 40), 20)
